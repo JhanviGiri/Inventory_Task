@@ -41,21 +41,26 @@ public class ProductService {
     public List<ProductResponseDTO> getProduct() {
 
         List<Product> products = productRepository.findAll();
+
         return products.stream()
-                .map(product -> new ProductRequestDTO(
-                    product.getId(),
-                    product.getName(),
-                    product.getQuantity()
-                ));
+                .map(product -> new ProductResponseDTO(
+                        product.getId(),
+                        product.getName(),
+                        product.getQuantity()
+                ))
+                .toList();
     }
 
-    public ProductResponseDTO updateQuantity(Long id, int quantity) {
+    public ProductResponseDTO updateProduct(Long id, ProductRequestDTO request) {
 
-        Product product = productRepository.findById(id).orElseThrow();
+        Product product = productRepository.findById(id)
+                .orElseThrow();
 
-        product.setQuantity(quantity);
+        product.setName(request.getProductName());
+        product.setQuantity(request.getQuantity());
 
         Product updatedProduct = productRepository.save(product);
+
         return new ProductResponseDTO(
                 updatedProduct.getId(),
                 updatedProduct.getName(),

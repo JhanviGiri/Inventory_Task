@@ -1,6 +1,7 @@
 package com.project.Inventory.controller;
 
-import com.project.Inventory.entity.Product;
+import com.project.Inventory.dto.ProductRequestDTO;
+import com.project.Inventory.dto.ProductResponseDTO;
 import com.project.Inventory.service.ProductService;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,21 +18,24 @@ public class ProductController {
     }
 
     @PostMapping
-    public Product addProduct(@RequestBody Product product) {
-        return service.addProduct(product);
+    public ProductResponseDTO addProduct(@RequestBody ProductRequestDTO request) {
+        return service.addProduct(request);
     }
 
+
+
     @GetMapping
-    public List<Product> getProduct() {
+    public List<ProductResponseDTO> getProduct() {
         return service.getProduct();
     }
 
-    @PutMapping("/{id}")
-    public Product updateQuantity(
-            @PathVariable Long id,
-            @RequestParam int quantity) {
 
-        return service.updateQuantity(id, quantity);
+    @PutMapping("/{id}")
+    public ProductResponseDTO updateProduct(
+            @PathVariable Long id,
+            @RequestBody ProductRequestDTO request) {
+
+        return service.updateProduct(id, request);
     }
 
     @DeleteMapping("/{id}")

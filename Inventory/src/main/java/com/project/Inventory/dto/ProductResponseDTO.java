@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @AllArgsConstructor
 public class ProductResponseDTO {
 
+    private Long id;
     private String productName;
     private int quantity;
 }
