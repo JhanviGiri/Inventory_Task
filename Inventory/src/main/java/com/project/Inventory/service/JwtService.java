@@ -1,6 +1,7 @@
 package com.project.Inventory.service;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,9 +17,9 @@ public class JwtService {
     public JwtService(
             @Value("${jwt.secret}") String secret) {
 
-        this.secretKey = Keys.hmacShaKeyFor(
-                secret.getBytes()
-        );
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+
+        this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String generateToken(String username) {
