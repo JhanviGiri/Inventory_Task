@@ -1,5 +1,7 @@
 package com.project.Inventory.service;
 
+import com.project.Inventory.dto.ProductRequestDTO;
+import com.project.Inventory.dto.ProductResponseDTO;
 import com.project.Inventory.entity.Product;
 import com.project.Inventory.exception.ProductAlreadyExistsException;
 import com.project.Inventory.repository.ProductRepository;
@@ -16,26 +18,49 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public Product addProduct(Product product) {
+    public ProductResponseDTO addProduct(ProductRequestDTO request) {
 
-        if (productRepository.existsById(product.getId())) {
+        if (productRepository.existsByName(request.getProductName())) {
             throw new ProductAlreadyExistsException("Product Already Exist");
         }
 
-        return productRepository.save(product);
+        Product product = new Product();
+        product.setName(request.getProductName());
+        product.setQuantity(request.getQuantity());
+
+        Product savedProduct = productRepository.save(product);
+
+        return new ProductResponseDTO(
+                savedProduct.getId(),
+                savedProduct.getName(),
+                savedProduct.getQuantity()
+        ) ;
     }
 
-    public List<Product> getProduct() {
-        return productRepository.findAll();
+
+    public List<ProductResponseDTO> getProduct() {
+
+        List<Product> products = productRepository.findAll();
+        return products.stream()
+                .map(product -> new ProductRequestDTO(
+                    product.getId(),
+                    product.getName(),
+                    product.getQuantity()
+                ));
     }
 
-    public Product updateQuantity(Long id, int quantity) {
+    public ProductResponseDTO updateQuantity(Long id, int quantity) {
 
         Product product = productRepository.findById(id).orElseThrow();
 
         product.setQuantity(quantity);
 
-        return productRepository.save(product);
+        Product updatedProduct = productRepository.save(product);
+        return new ProductResponseDTO(
+                updatedProduct.getId(),
+                updatedProduct.getName(),
+                updatedProduct.getQuantity()
+        );
     }
 
     public void deleteProduct(Long id) {
